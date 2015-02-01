@@ -1,0 +1,18 @@
+name: invdeleter
+main: invdeleter/Main
+version: 1.0
+api: [1.10.0]
+load: POSTWORLD
+
+author: PocketWarriors
+website: https://github.com/PocketWarriors/invdeleter
+commands:
+ invdelete:
+  permission: invdelete.command
+  description: Delete other players inventory
+  usage: "/invdelete <playerName>"
+  aliases: [clearinventory, clearinv, ci, invd]
+permissions:
+ invdelete.command:
+  default: op
+  description: "Allows to use the command /invdelete"
