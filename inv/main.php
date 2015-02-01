@@ -1,81 +1,69 @@
 <?php
 
-
 namespace SkyWars;
 
-use pocketmine\Server;
-use pocketmine\command\Command;
-use pocketmine\command\CommandExecutor;
-use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
-use pocketmine\Player;
-use pocketmine\item\Item;
-use pocketmine\event\player\PlayerChatEvent;
-use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\player\PlayerDeathEvent;
-use pocketmine\event\entity\EntityLevelChangeEvent;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\EventExecutor;
-use pocketmine\event\EventPriority;
-use pocketmine\event\Listener;
-use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
+use pocketmine\Server;
+use pocketmine\Player;
+
+use pocketmine\command\Command;
+use pocketmine\command\CommandSender;
+
+use pocketmine\event\Listener;
+use pocketmine\event\entity\EntityLevelChangeEvent;
+
+use pocketmine\inventory\BaseInventory;
+
 use pocketmine\utils\TextFormat;
-use pocketmine\scheduler\PluginTask;
+use pocketmine\utils\Config;
 
 
-
-class SkyWars extends PluginBase implements Listener{
+class Main extends PluginBase implements Listener{
 	
-public $isworldswitched = false;
-public $config;
-//public $bplayers;
-//public $cplayers;
+private $prefs;
 
 	public function onEnable(){
 		$this->getServer()->getPluginManager->registerEvents($this, $this); 
         	$this->getLogger()->info(TextFormat::DARK_RED . "Inv" . TextFormat::DARK_BLUE . "deleter" . TextFormat::AQUA . "plugin by PocketWarriors is loading...");
-        	$this->config = new Config($this->getDataFolder()."INVDELETER", Config::YAML, array(
-        	"Delete-inventory-on-world-switch" => true,
-          "Allow_op_to_use_/deleteinv_<player>" => true,
-            	$this->config->save();
-            
+        	@mkdir($this->getDataFolder());
+        	$this->prefs = new Config($this->getDataFolder()."preferences.yml", Config::YAML, array("Delete-inventory-on-world-switch" => true));
+            	$this->prefs->save();
 	}
 
 	public function onDisable(){
         	$this->getLogger()->info(TextFormat::GOLD . "INVDELETER plugin by PocketWarriors is disabling...");
-        	$this->config->save();
+        	$this->prefs->save();
         }
 	
-	public function onCommand(CommandSender $sender, Command $cmd, $label, array $args){
-		switch($cmd->getName()){
+	public function onCommand(CommandSender $sender, Command $command, $label, array $args){
+		switch($command->getName()){
 			case "deleteinv":
         			if($sender->hasPermission("deleteinv.command") {
-               $check = $this->config->get("Allow_op_to_use_/deleteinv"){
-               $goodtogo = if($sender->isOp and if($this->check = true); 
-               $name = $this->player->getName()->getInv();
-               if($goodtogo = true; $this->player->setInv(0);
-                return true;
-    	          }
-	               else{
-	            $sender->sendMessage("Something went wrong make sure player exists and youre op with permission to do this command.");
-	               }
-	            return false;     
-					           }
-					        }
-				}
+        				if(!isset($args[0])){
+        					return false;
+        				}
+        				$user = $this->getServer()->getPlayer($args[0]);
+        				if($user !== null and $user->isOnline()){
+        					$user->getInventory()->clearAll();
+        					$sender->sendMessage($user."'s inventory has been deleted.");
+        					return true;
+        				}else{
+        					$sender->sendMessage($user." is not online.");
+        					return true;
+        				}
+        			}
+        		break;
+        		
+        		default:
+        			return false;
 		}
 	}
 	
 	public function onLevelChange(EntityLevelChangeEvent $event){
-    $check1 = $this->config->get("Delete-inventory-on-world-switch" => true,){
-    $goodtogo1 = this->check1 = true;
-    if($goodtogo1 = true; $entity->getName()->getInv();
-    $entity->setInv(0);
-     return true;
-      }else{
-     return false;
-  				}
+		if($event->getEntity() instanceof Player){
+			if($this->prefs->get("Delete-inventory-on-world-switch") == true){
+				$event->getEntity()->getInventory()->clearAll();
+			}
 		}
 	}
+}
