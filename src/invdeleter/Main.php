@@ -1,6 +1,6 @@
 <?php
 
-namespace SkyWars;
+namespace invdeleter;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
